@@ -1,6 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 
-const linkReg = /^(https?:\/\/)?[\w]{1,30}[^\s@]*$/m;
+const linkReg = /^(https?:\/\/)?[\w-]{1,30}\.([\w]{1,30}[^\s@]*$)/m;
 
 module.exports.updateUserValidation = celebrate({
   body: Joi.object().keys({
@@ -36,5 +36,17 @@ module.exports.createCardsValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().pattern(linkReg),
+  }),
+});
+
+module.exports.cardsIdValidation = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().alphanum().length(24),
+  }),
+});
+
+module.exports.usersIdValidation = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().alphanum().length(24),
   }),
 });

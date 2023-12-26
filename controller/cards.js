@@ -20,6 +20,7 @@ module.exports.createCards = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при создании карточки.'));
+        return;
       }
       next(err);
     });
@@ -32,7 +33,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (req.user._id !== card.owner.toString()) {
         next(new UserRulesErrors('Нельзя удалять чужие карточки.'));
       } else {
-        Card.findByIdAndDelete(req.params.cardId)
+        Card.deleteOne(card)
           .then(() => {
             res.status(200).send({ message: 'Вы удалили карточку' });
           });
