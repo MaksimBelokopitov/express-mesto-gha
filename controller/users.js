@@ -44,19 +44,19 @@ module.exports.createUsers = (req, res, next) => {
       User.create({
         name, about, avatar, email, password: hash,
       })
-        .then(() => res.status(201).send({
-          name, about, avatar, email,
-        }));
+      .then(() => res.status(201).send({
+        name, about, avatar, email,
+      }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          next(new BadRequest('Переданы некорректные данные при создании пользователя.'));
+        } else if (err.code === 11000) {
+          next(new EmailError('Пользователь с указанным почтой уже существует'));
+        } else {
+          next(err);
+        }
+      })
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequest('Переданы некорректные данные при создании пользователя.'));
-      } else if (err.code === 11000) {
-        next(new EmailError('Пользователь с указанным почтой уже существует'));
-      } else {
-        next(err);
-      }
-    });
 };
 
 module.exports.updateUser = (req, res, next) => {
